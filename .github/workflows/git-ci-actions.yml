@@ -1,0 +1,27 @@
+name: Bookmark-backend deployment workflow
+run-name: ${{ github.actor }} has triggered this build
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build, Test and Push Bookmark-Backend App to docker hub...
+
+    steps:
+      - name: Checkout Bookmark-Backend App...
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          architecture: x64
+          cache: maven
+      - name: Verify Test...
+        run: mvn test
+      - name: Build App Jar (Skipping Test...)
+        run: mvn clean install -DskipTests
+      - name: Upload Artifact to target folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: bookmark-backend
+          path: target/*.jar
