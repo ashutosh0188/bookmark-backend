@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Checkout Bookmark-Backend App...
         uses: actions/checkout@v4
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -19,12 +20,18 @@ jobs:
           distribution: 'temurin'
           architecture: x64
           cache: maven
+
       - name: Verify Test...
         run: mvn test
-      - name: Build App Jar (Skipping Test...)
-        run: mvn clean install -DskipTests
-      - name: Upload Artifact to target folder
-        uses: actions/upload-artifact@v4
+
+      - name: Build docker image using Spring Boot plugin (CNB - Cloud Native Buildpacks)
+        uses: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=ashutosh0188/bookmark-backend
+
+      - name: Login in to docker hub
+        uses: docker/login-actions@v4
         with:
-          name: bookmark-backend
-          path: target/*.jar
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push docker image to docker hub
+        run: docker push ashutosh0188/bookmark-backend
