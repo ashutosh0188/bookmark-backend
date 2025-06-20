@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface BookmarkRepository extends JpaRepository<BookmarkEntity, Long> {
 
     Page<BookmarkProjection> findBy(Pageable pageable);
+    Page<BookmarkProjection> findByTitleContainingIgnoreCase(String query, Pageable pageable);
 }

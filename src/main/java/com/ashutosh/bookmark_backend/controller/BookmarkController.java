@@ -14,7 +14,11 @@ public class BookmarkController {
     private final BookmarkService service;
 
     @GetMapping("/api/bookmarks")
-    public BookmarkDTO getBookmarkPaginated(@RequestParam(value = "page", defaultValue = "1") int page) {
-        return service.getPaginatedBookmark(page);
+    public BookmarkDTO getBookmark(@RequestParam(value = "page", defaultValue = "1") int page,
+                                      @RequestParam(value = "query", required = false) String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return service.getPaginatedBookmark(page);
+        }
+        return service.searchBookmarkByTitle(query, page);
     }
 }
