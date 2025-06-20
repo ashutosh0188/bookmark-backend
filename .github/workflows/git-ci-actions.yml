@@ -1,6 +1,9 @@
 name: Bookmark-backend deployment workflow
 run-name: ${{ github.actor }} has triggered this build
-on: [push]
+on:
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
