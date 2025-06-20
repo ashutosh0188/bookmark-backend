@@ -1,6 +1,7 @@
 package com.ashutosh.bookmark_backend;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,58 @@ public class BookmarkControllerTest {
                         CoreMatchers.equalTo(currentPage)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalPage",
                         CoreMatchers.equalTo(totalPages)));
+    }
+
+    @Test
+    void addBookmark() throws Exception {
+        String content = """
+                {
+                    "title": "Google",
+                    "url": "https://www.google.com"
+                }
+                """;
+        mvc.perform(MockMvcRequestBuilders
+                .post("/api/bookmarks")
+                .contentType("application/json")
+                .content(content))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", CoreMatchers.equalTo(16)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title", CoreMatchers.equalTo("Google")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.url", CoreMatchers.equalTo("https://www.google.com")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt", CoreMatchers.notNullValue()));
+    }
+
+    @Test
+    void addBookmarkTitleFailure() throws Exception {
+        String content = """
+                {
+                    "url": "https://www.google.com"
+                }
+                """;
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/bookmarks")
+                        .contentType("application/json")
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", CoreMatchers.equalTo("Invalid request object.")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].field", CoreMatchers.equalTo("title")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].message", CoreMatchers.equalTo("title should not be empty.")));
+    }
+
+    @Test
+    void addBookmarkUrlFailure() throws Exception {
+        String content = """
+                {
+                    "title": "Google"
+                }
+                """;
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/bookmarks")
+                        .contentType("application/json")
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", CoreMatchers.equalTo("Invalid request object.")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].field", CoreMatchers.equalTo("url")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].message", CoreMatchers.equalTo("url should not be empty.")));
     }
 }

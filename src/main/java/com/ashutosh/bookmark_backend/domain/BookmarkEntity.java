@@ -3,6 +3,7 @@ package com.ashutosh.bookmark_backend.domain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
@@ -10,11 +11,12 @@ import java.time.Instant;
 @Table(name = "bookmark")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookmarkEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "title")
     private String title;
